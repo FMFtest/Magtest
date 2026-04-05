@@ -250,10 +250,13 @@ function shuffle(arr) {
   return a;
 }
 function rnd(min, max, step = 1) {
-  const steps = Math.floor((max - min) / step);
-  return +(min + Math.floor(Math.random() * (steps + 1)) * step).toFixed(4);
+  const steps = Math.floor(Math.round((max - min) / step));
+  const val   = min + Math.floor(Math.random() * (steps + 1)) * step;
+  const decimals = (step.toString().split('.')[1] || '').length;
+  return +val.toFixed(decimals);
 }
-function round2(v) { return Math.round(v * 100) / 100; }
+function round2(v) { return +v.toFixed(2); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
 // ══════════════════════════════════════════════
 //  WARIANT A — pytania testowe
@@ -351,34 +354,31 @@ const testB = [
 //  WARIANT A — zadania obliczeniowe (losowe liczby)
 // ══════════════════════════════════════════════
 function makeOpenA() {
-  // Zadanie 5: I = F / (B · l · sin α)
-  // Ustalamy α = 30°, losujemy B, l, liczymy F tak żeby I było ładne
-  const I5  = rnd(5, 20, 5);          // A — "ładne" I
-  const B5  = rnd(1, 4, 1) * 0.1;     // 0.1 … 0.4 T
-  const l5  = rnd(1, 3, 1) * 0.5;     // 0.5, 1.0, 1.5 m
+  // Zadanie 5: I = F / (B · l · sin α), α = 30°
+  const I5    = rnd(5, 20, 5);
+  const B5    = pick([0.1, 0.2, 0.3, 0.4]);
+  const l5    = pick([0.5, 1.0, 1.5]);
   const sin30 = 0.5;
-  const F5  = round2(B5 * I5 * l5 * sin30);
-  // ans: I = F / (B * l * sin30)
-  const ans5 = round2(F5 / (B5 * l5 * sin30));
+  const F5    = round2(B5 * I5 * l5 * sin30);
+  const ans5  = round2(F5 / (B5 * l5 * sin30));
 
-  // Zadanie 6: I = (m · g) / (B · l),  F_A = F_g, α = 90°
-  const m6  = rnd(1, 4, 1);           // kg
-  const B6  = rnd(10, 20, 5);         // T
-  const l6  = rnd(1, 4, 1) * 0.25;   // 0.25 … 1.0 m
+  // Zadanie 6: I = (m · g) / (B · l), α = 90°
+  const m6   = rnd(1, 4, 1);
+  const B6   = rnd(10, 20, 5);
+  const l6   = pick([0.25, 0.50, 0.75, 1.00]);
   const ans6 = round2((m6 * 10) / (B6 * l6));
 
-  // Zadanie 7: r = m_e · v / (e · B)
-  // e = 1.6e-19, m_e = 9.1e-31
-  const vExp7 = rnd(2, 8, 1);         // ×10^6 m/s
+  // Zadanie 7: r = m_e · v / (e · B), e=1.6e-19, m_e=9.1e-31
+  const vExp7 = rnd(2, 8, 1);
   const v7    = vExp7 * 1e6;
-  const B7    = rnd(1, 5, 1) * 0.01;  // 0.01 … 0.05 T
+  const B7    = pick([0.01, 0.02, 0.03, 0.04, 0.05]);
   const r7raw = (9.1e-31 * v7) / (1.6e-19 * B7);
-  const ans7  = round2(r7raw * 1e3);   // wynik w mm
+  const ans7  = round2(r7raw * 1e3);  // wynik w mm
 
-  // Zadanie 8: I = (λ · l · g) / (B · l · sin α) = (λ · g) / (B · sin α)
-  const lambda8 = rnd(2, 8, 1) * 0.01; // 0.02 … 0.08 kg/m
-  const l8      = rnd(4, 9, 1) * 0.1;  // 0.4 … 0.9 m
-  const B8      = rnd(2, 6, 1) * 0.1;  // 0.2 … 0.6 T
+  // Zadanie 8: I = (λ·g) / (B·sin30°)
+  const lambda8 = pick([0.02, 0.03, 0.04, 0.05, 0.06, 0.08]);
+  const l8      = pick([0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
+  const B8      = pick([0.2, 0.3, 0.4, 0.5, 0.6]);
   const sin30b  = 0.5;
   const m8      = round2(lambda8 * l8);
   const ans8    = round2((m8 * 10) / (B8 * l8 * sin30b));
@@ -412,30 +412,30 @@ function makeOpenA() {
 // ══════════════════════════════════════════════
 function makeOpenB() {
   // Zadanie 5: B = (m · g) / (I · l)
-  const m5  = rnd(2, 8, 1);           // g → konwertujemy na kg
-  const I5  = rnd(5, 15, 5);          // A
-  const l5  = rnd(1, 4, 1) * 0.1;    // 0.1 … 0.4 m
+  const m5  = rnd(2, 8, 1);
+  const I5  = rnd(5, 15, 5);
+  const l5  = pick([0.1, 0.2, 0.3, 0.4]);
   const ans5 = round2((m5 * 0.001 * 10) / (I5 * l5));
 
   // Zadanie 6: I = F / (B · l), q = I · t
-  const l6  = rnd(2, 5, 1) * 0.1;    // 0.2 … 0.5 m
-  const B6  = rnd(2, 6, 1) * 0.1;    // 0.2 … 0.6 T
-  const I6  = rnd(5, 20, 5);         // A (wyliczone z F)
+  const l6  = pick([0.2, 0.3, 0.4, 0.5]);
+  const B6  = pick([0.2, 0.3, 0.4, 0.5, 0.6]);
+  const I6  = rnd(5, 20, 5);
   const F6  = round2(B6 * I6 * l6);
-  const t6  = rnd(1, 4, 1) * 60;    // min → s
-  const ans6 = round2(I6 * t6);       // C
+  const t6  = rnd(1, 4, 1) * 60;
+  const ans6 = round2(I6 * t6);
 
   // Zadanie 7: r = m_p · v / (e · B), m_p = 1.67e-27
-  const vExp7 = rnd(1, 5, 1);        // ×10^6 m/s
+  const vExp7 = rnd(1, 5, 1);
   const v7    = vExp7 * 1e6;
-  const B7    = rnd(1, 3, 1) * 0.1;  // 0.1 … 0.3 T
+  const B7    = pick([0.1, 0.2, 0.3]);
   const r7raw = (1.67e-27 * v7) / (1.6e-19 * B7);
   const ans7  = round2(r7raw * 100);  // wynik w cm
 
   // Zadanie 8: I = (λ · g) / B  (α = 90°, sin 90° = 1)
-  const lambda8 = rnd(2, 6, 1) * 0.01; // kg/m
-  const l8      = rnd(5, 10, 1) * 0.1; // m
-  const B8      = rnd(3, 8, 1) * 0.1;  // T
+  const lambda8 = pick([0.02, 0.03, 0.04, 0.05, 0.06]);
+  const l8      = pick([0.5, 0.6, 0.7, 0.8, 0.9, 1.0]);
+  const B8      = pick([0.3, 0.4, 0.5, 0.6, 0.8]);
   const m8      = round2(lambda8 * l8);
   const ans8    = round2((m8 * 10) / (B8 * l8));
 
