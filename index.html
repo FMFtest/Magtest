@@ -122,7 +122,6 @@
   </div>
 </header>
 <main id="mainContent">
-  <!-- EKRAN STARTOWY -->
   <div id="screenStart">
     <div class="card title-card">
       <div class="subject">Sprawdzian z Fizyki</div>
@@ -155,7 +154,7 @@
           <input type="text" id="nazwisko" placeholder="np. Jan Kowalski" autocomplete="off" oninput="checkStart()"/>
         </label>
         <label>Klasa
-          <input type="text" id="klasa" placeholder="np. 1A" autocomplete="off" oninput="checkStart()"/>
+          <input type="text" id="klasa" placeholder="np. 2A" autocomplete="off" oninput="checkStart()"/>
         </label>
       </div>
       <button class="btn-start" id="btnStart" disabled onclick="startTest()">
@@ -163,7 +162,6 @@
       </button>
     </div>
   </div>
-  <!-- EKRAN PYTANIA -->
   <div id="screenQuestion" class="hidden">
     <div class="progress-wrap">
       <div class="progress-info">
@@ -196,7 +194,6 @@
       <button class="btn-next" id="btnNext" disabled onclick="nextQuestion()">Dalej →</button>
     </div>
   </div>
-  <!-- EKRAN KOŃCOWY -->
   <div id="screenSummary" class="hidden">
     <div class="card title-card">
       <div class="subject">✅ Sprawdzian ukończony</div>
@@ -238,7 +235,12 @@
 // ══════════════════════════════════════════════
 const TEST_MINUTES   = 40;
 const MAX_VIOLATIONS = 2;
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxeoR_CRcuFVYlq3vlje_Unb6TNGa1V5r9ViSqkw5FavxYqu9zZZtRz9YHstJkyqEAG5Q/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfQLDDtp5E2um9_9rWwBt6mcey2-dEaemZiqf_p0h_VqbgYc7AZMv8kOmB4OHEU_2VIQ/exec";
+
+// ══════════════════════════════════════════════
+//  🔑  UNIKALNY KLUCZ SESJI
+// ══════════════════════════════════════════════
+const SESSION_ID = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
 // ── POMOCNICZE ────────────────────────────────
 function shuffle(arr) {
@@ -264,42 +266,22 @@ function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 const testA = [
   {
     q: "Jak zmieni się siła Ampère'a, jeśli natężenie prądu w przewodniku zwiększymy dwukrotnie, a pozostałe warunki nie ulegną zmianie?",
-    opts: [
-      "Siła Ampère'a nie zmieni się.",
-      "Siła Ampère'a zmniejszy się dwukrotnie.",
-      "Siła Ampère'a zwiększy się dwukrotnie.",
-      "Działanie siły Ampère'a ustanie."
-    ],
-    ans: 2   // indeks poprawnej odpowiedzi w tablicy opts
+    opts: ["Siła Ampère'a nie zmieni się.","Siła Ampère'a zmniejszy się dwukrotnie.","Siła Ampère'a zwiększy się dwukrotnie.","Działanie siły Ampère'a ustanie."],
+    ans: 2
   },
   {
     q: "Jak wyznaczamy kierunek siły działającej na przewodnik z prądem w polu magnetycznym?",
-    opts: [
-      "Korzystając z reguły śruby (prawej ręki).",
-      "Korzystając z reguły lewej ręki.",
-      "Korzystając z reguły prawej ręki w wersji dla prądu.",
-      "Korzystając z zasady superpozycji."
-    ],
+    opts: ["Korzystając z reguły śruby (prawej ręki).","Korzystając z reguły lewej ręki.","Korzystając z reguły prawej ręki w wersji dla prądu.","Korzystając z zasady superpozycji."],
     ans: 1
   },
   {
     q: "Cząstka naładowana porusza się równolegle do linii sił pola magnetycznego. Jaka siła działa na tę cząstkę?",
-    opts: [
-      "Siła Lorentza o wartości maksymalnej.",
-      "Siła Lorentza o wartości zależnej od prędkości.",
-      "Siła Lorentza równa zeru.",
-      "Siła Ampère'a skierowana prostopadle do ruchu."
-    ],
+    opts: ["Siła Lorentza o wartości maksymalnej.","Siła Lorentza o wartości zależnej od prędkości.","Siła Lorentza równa zeru.","Siła Ampère'a skierowana prostopadle do ruchu."],
     ans: 2
   },
   {
     q: "Przewodnik z prądem I = 2 A i długością czynną l = 0,5 m umieszczono prostopadle do jednorodnego pola magnetycznego o indukcji B = 0,4 T. Która odpowiedź podaje prawidłową wartość siły Ampère'a oraz właściwy sposób wyznaczenia jej kierunku?",
-    opts: [
-      "F = 0,4 N; kierunek wyznaczamy regułą prawej ręki.",
-      "F = 0,4 N; kierunek wyznaczamy regułą lewej ręki.",
-      "F = 0,8 N; kierunek wyznaczamy regułą lewej ręki.",
-      "F = 0,8 N; kierunek wyznaczamy regułą prawej ręki."
-    ],
+    opts: ["F = 0,4 N; kierunek wyznaczamy regułą prawej ręki.","F = 0,4 N; kierunek wyznaczamy regułą lewej ręki.","F = 0,8 N; kierunek wyznaczamy regułą lewej ręki.","F = 0,8 N; kierunek wyznaczamy regułą prawej ręki."],
     ans: 2
   }
 ];
@@ -310,167 +292,74 @@ const testA = [
 const testB = [
   {
     q: "Jak zmieni się siła Ampère'a, jeśli czynną długość przewodnika zmniejszymy dwukrotnie, a pozostałe warunki nie ulegną zmianie?",
-    opts: [
-      "Działanie siły Ampère'a ustanie.",
-      "Siła Ampère'a zmniejszy się dwukrotnie.",
-      "Siła Ampère'a zwiększy się dwukrotnie.",
-      "Siła Ampère'a nie zmieni się."
-    ],
+    opts: ["Działanie siły Ampère'a ustanie.","Siła Ampère'a zmniejszy się dwukrotnie.","Siła Ampère'a zwiększy się dwukrotnie.","Siła Ampère'a nie zmieni się."],
     ans: 1
   },
   {
     q: "W jaki sposób można zmienić kierunek ruchu przewodnika z prądem w polu magnetycznym?",
-    opts: [
-      "Zwiększyć natężenie prądu w przewodniku.",
-      "Zmniejszyć natężenie prądu w przewodniku.",
-      "Zamienić miejscami bieguny magnesu.",
-      "Zwiększyć długość czynną przewodnika."
-    ],
+    opts: ["Zwiększyć natężenie prądu w przewodniku.","Zmniejszyć natężenie prądu w przewodniku.","Zamienić miejscami bieguny magnesu.","Zwiększyć długość czynną przewodnika."],
     ans: 2
   },
   {
     q: "Cząstka naładowana porusza się prostopadle do linii sił pola magnetycznego. Siła Lorentza działająca na tę cząstkę jest:",
-    opts: [
-      "Równa zeru.",
-      "Skierowana zgodnie z ruchem cząstki.",
-      "Maksymalna i prostopadła do prędkości cząstki.",
-      "Skierowana przeciwnie do ruchu cząstki."
-    ],
+    opts: ["Równa zeru.","Skierowana zgodnie z ruchem cząstki.","Maksymalna i prostopadła do prędkości cząstki.","Skierowana przeciwnie do ruchu cząstki."],
     ans: 2
   },
   {
     q: "Elektron porusza się z prędkością v w polu magnetycznym o indukcji B. Kąt między wektorem prędkości a wektorem indukcji wynosi α = 60°. Które wyrażenie poprawnie opisuje siłę Lorentza działającą na elektron?",
-    opts: [
-      "F_L = e · v · B",
-      "F_L = e · v · B · cos 60° = ½ · e · v · B",
-      "F_L = e · v · B · sin 60° = (√3/2) · e · v · B",
-      "F_L = e · v · B · sin 30° = ½ · e · v · B"
-    ],
+    opts: ["F_L = e · v · B","F_L = e · v · B · cos 60° = ½ · e · v · B","F_L = e · v · B · sin 60° = (√3/2) · e · v · B","F_L = e · v · B · sin 30° = ½ · e · v · B"],
     ans: 2
   }
 ];
 
 // ══════════════════════════════════════════════
-//  WARIANT A — zadania obliczeniowe (losowe liczby)
+//  WARIANT A — zadania obliczeniowe
 // ══════════════════════════════════════════════
 function makeOpenA() {
-  // Zadanie 5: I = F / (B · l · sin α), α = 30°
-  const I5    = rnd(5, 20, 5);
-  const B5    = pick([0.1, 0.2, 0.3, 0.4]);
-  const l5    = pick([0.5, 1.0, 1.5]);
-  const sin30 = 0.5;
-  const F5    = round2(B5 * I5 * l5 * sin30);
-  const ans5  = round2(F5 / (B5 * l5 * sin30));
-
-  // Zadanie 6: I = (m · g) / (B · l), α = 90°
-  const m6   = rnd(1, 4, 1);
-  const B6   = rnd(10, 20, 5);
-  const l6   = pick([0.25, 0.50, 0.75, 1.00]);
-  const ans6 = round2((m6 * 10) / (B6 * l6));
-
-  // Zadanie 7: r = m_e · v / (e · B), e=1.6e-19, m_e=9.1e-31
-  const vExp7 = rnd(2, 8, 1);
-  const v7    = vExp7 * 1e6;
-  const B7    = pick([0.01, 0.02, 0.03, 0.04, 0.05]);
-  const r7raw = (9.1e-31 * v7) / (1.6e-19 * B7);
-  const ans7  = round2(r7raw * 1e3);  // wynik w mm
-
-  // Zadanie 8: I = (λ·g) / (B·sin30°)
-  const lambda8 = pick([0.02, 0.03, 0.04, 0.05, 0.06, 0.08]);
-  const l8      = pick([0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
-  const B8      = pick([0.2, 0.3, 0.4, 0.5, 0.6]);
-  const sin30b  = 0.5;
-  const m8      = round2(lambda8 * l8);
-  const ans8    = round2((m8 * 10) / (B8 * l8 * sin30b));
-
+  const I5 = rnd(5,20,5), B5 = pick([0.1,0.2,0.3,0.4]), l5 = pick([0.5,1.0,1.5]);
+  const F5 = round2(B5*I5*l5*0.5), ans5 = round2(F5/(B5*l5*0.5));
+  const m6 = rnd(1,4,1), B6 = rnd(10,20,5), l6 = pick([0.25,0.50,0.75,1.00]);
+  const ans6 = round2((m6*10)/(B6*l6));
+  const vExp7 = rnd(2,8,1), v7 = vExp7*1e6, B7 = pick([0.01,0.02,0.03,0.04,0.05]);
+  const ans7 = round2((9.1e-31*v7)/(1.6e-19*B7)*1e3);
+  const lambda8 = pick([0.02,0.03,0.04,0.05,0.06,0.08]), l8 = pick([0.4,0.5,0.6,0.7,0.8,0.9]), B8 = pick([0.2,0.3,0.4,0.5,0.6]);
+  const m8 = round2(lambda8*l8), ans8 = round2((m8*10)/(B8*l8*0.5));
   return [
-    {
-      q: `Na przewodnik o długości czynnej l = ${l5} m, umieszczony w jednorodnym polu magnetycznym o indukcji B = ${B5} T, działa siła Ampère'a F = ${F5} N. Oblicz natężenie prądu w przewodniku, jeśli kąt między kierunkiem prądu a wektorem indukcji magnetycznej wynosi α = 30°.`,
-      unit: "A",
-      ans: [ans5]
-    },
-    {
-      q: `Prostoliniowy przewodnik o masie m = ${m6} kg i długości l = ${l6} m umieszczono w jednorodnym polu magnetycznym o indukcji B = ${B6} T prostopadle do linii indukcji. Oblicz natężenie prądu, przy którym siła Ampère'a zrównoważy siłę ciężkości (g = 10 m/s²).`,
-      unit: "A",
-      ans: [ans6]
-    },
-    {
-      q: `Elektron wlatuje z prędkością v = ${vExp7} · 10⁶ m/s prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B7} T i zaczyna poruszać się po okręgu. Oblicz promień toru elektronu w milimetrach. Dane: e = 1,6 · 10⁻¹⁹ C, m_e = 9,1 · 10⁻³¹ kg.`,
-      unit: "mm",
-      ans: [ans7]
-    },
-    {
-      q: `Przewodnik o długości czynnej l = ${l8} m i masie liniowej λ = ${lambda8 * 1000} g/m umieszczono poziomo w jednorodnym polu magnetycznym o indukcji B = ${B8} T pod kątem α = 30° do linii indukcji. Oblicz minimalne natężenie prądu, przy którym siła Ampère'a uniesie przewodnik (g = 10 m/s²).`,
-      unit: "A",
-      ans: [ans8]
-    }
+    { q:`Na przewodnik o długości czynnej l = ${l5} m, umieszczony w jednorodnym polu magnetycznym o indukcji B = ${B5} T, działa siła Ampère'a F = ${F5} N. Oblicz natężenie prądu w przewodniku, jeśli kąt między kierunkiem prądu a wektorem indukcji magnetycznej wynosi α = 30°.`, unit:"A", ans:[ans5] },
+    { q:`Prostoliniowy przewodnik o masie m = ${m6} kg i długości l = ${l6} m umieszczono w jednorodnym polu magnetycznym o indukcji B = ${B6} T prostopadle do linii indukcji. Oblicz natężenie prądu, przy którym siła Ampère'a zrównoważy siłę ciężkości (g = 10 m/s²).`, unit:"A", ans:[ans6] },
+    { q:`Elektron wlatuje z prędkością v = ${vExp7} · 10⁶ m/s prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B7} T i zaczyna poruszać się po okręgu. Oblicz promień toru elektronu w milimetrach. Dane: e = 1,6 · 10⁻¹⁹ C, m_e = 9,1 · 10⁻³¹ kg.`, unit:"mm", ans:[ans7] },
+    { q:`Przewodnik o długości czynnej l = ${l8} m i masie liniowej λ = ${lambda8*1000} g/m umieszczono poziomo w jednorodnym polu magnetycznym o indukcji B = ${B8} T pod kątem α = 30° do linii indukcji. Oblicz minimalne natężenie prądu, przy którym siła Ampère'a uniesie przewodnik (g = 10 m/s²).`, unit:"A", ans:[ans8] }
   ];
 }
 
 // ══════════════════════════════════════════════
-//  WARIANT B — zadania obliczeniowe (losowe liczby)
+//  WARIANT B — zadania obliczeniowe
 // ══════════════════════════════════════════════
 function makeOpenB() {
-  // Zadanie 5: B = (m · g) / (I · l)
-  const m5  = rnd(2, 8, 1);
-  const I5  = rnd(5, 15, 5);
-  const l5  = pick([0.1, 0.2, 0.3, 0.4]);
-  const ans5 = round2((m5 * 0.001 * 10) / (I5 * l5));
-
-  // Zadanie 6: I = F / (B · l), q = I · t
-  const l6  = pick([0.2, 0.3, 0.4, 0.5]);
-  const B6  = pick([0.2, 0.3, 0.4, 0.5, 0.6]);
-  const I6  = rnd(5, 20, 5);
-  const F6  = round2(B6 * I6 * l6);
-  const t6  = rnd(1, 4, 1) * 60;
-  const ans6 = round2(I6 * t6);
-
-  // Zadanie 7: r = m_p · v / (e · B), m_p = 1.67e-27
-  const vExp7 = rnd(1, 5, 1);
-  const v7    = vExp7 * 1e6;
-  const B7    = pick([0.1, 0.2, 0.3]);
-  const r7raw = (1.67e-27 * v7) / (1.6e-19 * B7);
-  const ans7  = round2(r7raw * 100);  // wynik w cm
-
-  // Zadanie 8: I = (λ · g) / B  (α = 90°, sin 90° = 1)
-  const lambda8 = pick([0.02, 0.03, 0.04, 0.05, 0.06]);
-  const l8      = pick([0.5, 0.6, 0.7, 0.8, 0.9, 1.0]);
-  const B8      = pick([0.3, 0.4, 0.5, 0.6, 0.8]);
-  const m8      = round2(lambda8 * l8);
-  const ans8    = round2((m8 * 10) / (B8 * l8));
-
+  const m5 = rnd(2,8,1), I5 = rnd(5,15,5), l5 = pick([0.1,0.2,0.3,0.4]);
+  const ans5 = round2((m5*0.001*10)/(I5*l5));
+  const l6 = pick([0.2,0.3,0.4,0.5]), B6 = pick([0.2,0.3,0.4,0.5,0.6]), I6 = rnd(5,20,5);
+  const F6 = round2(B6*I6*l6), t6 = rnd(1,4,1)*60, ans6 = round2(I6*t6);
+  const vExp7 = rnd(1,5,1), v7 = vExp7*1e6, B7 = pick([0.1,0.2,0.3]);
+  const ans7 = round2((1.67e-27*v7)/(1.6e-19*B7)*100);
+  const lambda8 = pick([0.02,0.03,0.04,0.05,0.06]), l8 = pick([0.5,0.6,0.7,0.8,0.9,1.0]), B8 = pick([0.3,0.4,0.5,0.6,0.8]);
+  const m8 = round2(lambda8*l8), ans8 = round2((m8*10)/(B8*l8));
   return [
-    {
-      q: `Jaka powinna być indukcja magnetyczna B pola, aby siła Ampère'a zrównoważyła siłę ciężkości przewodnika o masie m = ${m5} g i długości l = ${l5} m? Natężenie prądu w przewodniku wynosi I = ${I5} A (g = 10 m/s²). Przewodnik ustaw prostopadle do linii pola.`,
-      unit: "T",
-      ans: [ans5]
-    },
-    {
-      q: `Na przewodnik o długości czynnej l = ${l6} m, umieszczony prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B6} T, działa siła Ampère'a F = ${F6} N. Jaki ładunek przepłynął przez przekrój poprzeczny przewodnika w czasie t = ${t6 / 60} min?`,
-      unit: "C",
-      ans: [ans6]
-    },
-    {
-      q: `Proton wlatuje z prędkością v = ${vExp7} · 10⁶ m/s prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B7} T i porusza się po okręgu. Oblicz promień toru protonu w centymetrach. Dane: e = 1,6 · 10⁻¹⁹ C, m_p = 1,67 · 10⁻²⁷ kg.`,
-      unit: "cm",
-      ans: [ans7]
-    },
-    {
-      q: `Przewodnik o długości czynnej l = ${l8} m i masie liniowej λ = ${lambda8 * 1000} g/m umieszczono poziomo prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B8} T (α = 90°). Oblicz minimalne natężenie prądu, przy którym siła Ampère'a uniesie przewodnik (g = 10 m/s²).`,
-      unit: "A",
-      ans: [ans8]
-    }
+    { q:`Jaka powinna być indukcja magnetyczna B pola, aby siła Ampère'a zrównoważyła siłę ciężkości przewodnika o masie m = ${m5} g i długości l = ${l5} m? Natężenie prądu w przewodniku wynosi I = ${I5} A (g = 10 m/s²). Przewodnik ustaw prostopadle do linii pola.`, unit:"T", ans:[ans5] },
+    { q:`Na przewodnik o długości czynnej l = ${l6} m, umieszczony prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B6} T, działa siła Ampère'a F = ${F6} N. Jaki ładunek przepłynął przez przekrój poprzeczny przewodnika w czasie t = ${t6/60} min?`, unit:"C", ans:[ans6] },
+    { q:`Proton wlatuje z prędkością v = ${vExp7} · 10⁶ m/s prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B7} T i porusza się po okręgu. Oblicz promień toru protonu w centymetrach. Dane: e = 1,6 · 10⁻¹⁹ C, m_p = 1,67 · 10⁻²⁷ kg.`, unit:"cm", ans:[ans7] },
+    { q:`Przewodnik o długości czynnej l = ${l8} m i masie liniowej λ = ${lambda8*1000} g/m umieszczono poziomo prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B8} T (α = 90°). Oblicz minimalne natężenie prądu, przy którym siła Ampère'a uniesie przewodnik (g = 10 m/s²).`, unit:"A", ans:[ans8] }
   ];
 }
 
 // ── BUDOWANIE WARIANTU ────────────────────────
 function buildVariant(id) {
-  const testQ = id === 'B' ? testB : testA;
-  const openQ = id === 'B' ? makeOpenB() : makeOpenA();
-  const shuffledTest = shuffle(testQ.map((q) => ({ ...q, part: 'A' })));
-  const openWithPart = openQ.map((q, i) => ({ ...q, origIdx: i, part: 'B' }));
+  const testQ = id==='B' ? testB : testA;
+  const openQ = id==='B' ? makeOpenB() : makeOpenA();
+  const shuffledTest = shuffle(testQ.map((q)=>({...q, part:'A'})));
+  const openWithPart = openQ.map((q,i)=>({...q, origIdx:i, part:'B'}));
   return [
-    ...shuffledTest.map((q, i) => ({ ...q, origIdx: i })),
+    ...shuffledTest.map((q,i)=>({...q, origIdx:i})),
     ...openWithPart
   ];
 }
@@ -484,13 +373,58 @@ let allQuestions = [];
 let currentIdx   = 0;
 let answers      = [];
 let testStarted  = false;
+let startTime    = null;
+
+// ══════════════════════════════════════════════
+//  📡  FUNKCJA WYSYŁANIA DANYCH
+// ══════════════════════════════════════════════
+function buildPayload(status) {
+  const nazwisko = document.getElementById('nazwisko').value.trim() || '(brak)';
+  const klasa    = document.getElementById('klasa').value.trim()    || '(brak)';
+  const tAns = ['—','—','—','—'];
+  const oAns = ['—','—','—','—'];
+  answers.forEach(a => {
+    if (!a) return;
+    if (a.part==='A') tAns[a.origIdx] = a.answer;
+    if (a.part==='B') oAns[a.origIdx] = a.answer;
+  });
+  let scoreA=0, scoreB=0;
+  answers.forEach(a => {
+    if (!a) return;
+    if (a.part==='A' && a.isCorrect) scoreA += 0.5;
+    if (a.part==='B' && a.isCorrect) scoreB += 2;
+  });
+  const total = Math.round((scoreA+scoreB)*10)/10;
+  const now = new Date();
+  const elapsed = startTime ? Math.floor((Date.now()-startTime)/60000) : 0;
+  return {
+    sessionId: SESSION_ID,
+    nazwisko, klasa, wariant,
+    data: now.toLocaleDateString('pl-PL') + ' ' + now.toLocaleTimeString('pl-PL'),
+    czas: elapsed + ' min',
+    naruszenia: violations,
+    status,
+    wynik: ['✅ UKOŃCZONO','⌛ CZAS MINĄŁ'].includes(status) ? (total+' / 10') : '—',
+    t1:tAns[0], t2:tAns[1], t3:tAns[2], t4:tAns[3],
+    o5:oAns[0], o6:oAns[1], o7:oAns[2], o8:oAns[3]
+  };
+}
+
+function sendData(status) {
+  fetch(SCRIPT_URL, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(buildPayload(status))
+  }).catch(e => console.warn('Błąd wysyłania:', e));
+}
 
 // ── START ─────────────────────────────────────
 function checkStart() {
   const n = document.getElementById('nazwisko').value.trim();
   const k = document.getElementById('klasa').value.trim();
-  document.getElementById('btnStart').disabled = !(n.length >= 2 && k.length >= 1);
+  document.getElementById('btnStart').disabled = !(n.length>=2 && k.length>=1);
 }
+
 function startTest() {
   const n = document.getElementById('nazwisko').value.trim();
   const k = document.getElementById('klasa').value.trim();
@@ -498,6 +432,11 @@ function startTest() {
   allQuestions = buildVariant(wariant);
   answers = new Array(allQuestions.length).fill(null);
   testStarted = true;
+  startTime   = Date.now();
+
+  // ✅ ПЕРШИЙ ЗАПИС: учень розпочав тест
+  sendData('⏳ ROZPOCZĘTO');
+
   document.getElementById('screenStart').classList.add('hidden');
   document.getElementById('screenQuestion').classList.remove('hidden');
   startTimer();
@@ -509,26 +448,21 @@ function showQuestion(idx) {
   currentIdx = idx;
   const q = allQuestions[idx];
   const total = allQuestions.length;
-
-  document.getElementById('progressLabel').textContent = `Pytanie ${idx + 1} z ${total}`;
-  document.getElementById('progressPts').textContent   = q.part === 'A' ? '0,5 pkt' : '2 pkt';
-  document.getElementById('progressFill').style.width  = ((idx / total) * 100) + '%';
-
+  document.getElementById('progressLabel').textContent = `Pytanie ${idx+1} z ${total}`;
+  document.getElementById('progressPts').textContent   = q.part==='A' ? '0,5 pkt' : '2 pkt';
+  document.getElementById('progressFill').style.width  = ((idx/total)*100)+'%';
   const badge = document.getElementById('sectionBadge');
-  badge.className = 'section-badge ' + (q.part === 'A' ? 'partA' : 'partB');
-  badge.textContent = q.part === 'A' ? 'Część A · 0,5 pkt' : 'Część B · 2 pkt';
-
+  badge.className = 'section-badge '+(q.part==='A'?'partA':'partB');
+  badge.textContent = q.part==='A' ? 'Część A · 0,5 pkt' : 'Część B · 2 pkt';
   document.getElementById('qText').textContent = q.q;
   document.getElementById('btnNext').disabled = true;
-  document.getElementById('btnNext').textContent = idx === total - 1 ? 'Zakończ sprawdzian →' : 'Dalej →';
-
+  document.getElementById('btnNext').textContent = idx===total-1 ? 'Zakończ sprawdzian →' : 'Dalej →';
   const optBlock = document.getElementById('optionsBlock');
   const numBlock = document.getElementById('numericBlock');
-
-  if (q.part === 'A') {
+  if (q.part==='A') {
     optBlock.classList.remove('hidden');
     numBlock.classList.add('hidden');
-    const optIndices = shuffle([0, 1, 2, 3]);
+    const optIndices = shuffle([0,1,2,3]);
     optIndices.forEach((origOpt, displayPos) => {
       const letters = ['A','B','C','D'];
       const optEl   = document.getElementById(`opt${displayPos}`);
@@ -536,7 +470,7 @@ function showQuestion(idx) {
       optEl.querySelector('input').checked = false;
       optEl.querySelector('.opt-key').textContent  = letters[displayPos];
       optEl.querySelector('.opt-text').textContent = q.opts[origOpt];
-      optEl.onclick = (function(op, el){ return function(){ selectOpt(op, el, origOpt); }; })(displayPos, optEl);
+      optEl.onclick = (function(op,el){ return function(){ selectOpt(op,el,origOpt); }; })(displayPos,optEl);
     });
     q._optMap = optIndices;
   } else {
@@ -546,7 +480,6 @@ function showQuestion(idx) {
     document.getElementById('unitLabel').textContent = q.unit;
     document.getElementById('numericAns').value = '';
   }
-
   const card = document.getElementById('questionCard');
   card.classList.remove('slide-in');
   void card.offsetWidth;
@@ -563,35 +496,38 @@ function selectOpt(displayIdx, el, origOpt) {
   selectedOrigOptIdx    = origOpt;
   document.getElementById('btnNext').disabled = false;
 }
+
 function checkNext() {
   const val = document.getElementById('numericAns').value.trim();
-  document.getElementById('btnNext').disabled = (val === '');
+  document.getElementById('btnNext').disabled = (val==='');
 }
+
 function nextQuestion() {
   const q = allQuestions[currentIdx];
-  if (q.part === 'A') {
+  if (q.part==='A') {
     const letters = ['A','B','C','D'];
     answers[currentIdx] = {
-      part: 'A',
-      origIdx: q.origIdx,
+      part:'A', origIdx:q.origIdx,
       answer: letters[selectedOrigOptIdx],
-      isCorrect: selectedOrigOptIdx === q.ans
+      isCorrect: selectedOrigOptIdx===q.ans
     };
     selectedOptDisplayIdx = null;
     selectedOrigOptIdx    = null;
   } else {
     const raw = document.getElementById('numericAns').value.trim();
-    const val = parseFloat(raw.replace(',', '.'));
-    const isCorrect = !isNaN(val) && q.ans.some(a => Math.abs(val - a) <= Math.max(0.15, Math.abs(a) * 0.05));
-    answers[currentIdx] = {
-      part: 'B',
-      origIdx: q.origIdx,
-      answer: raw,
-      isCorrect
-    };
+    const val = parseFloat(raw.replace(',','.'));
+    const isCorrect = !isNaN(val) && q.ans.some(a => Math.abs(val-a)<=Math.max(0.15,Math.abs(a)*0.05));
+    answers[currentIdx] = { part:'B', origIdx:q.origIdx, answer:raw, isCorrect };
   }
-  if (currentIdx + 1 < allQuestions.length) {
-    showQuestion(currentIdx + 1);
+
+  const answered = answers.filter(Boolean).length;
+  const totalQ   = allQuestions.length;
+  const isLastQ  = currentIdx+1 >= totalQ;
+
+  if (!isLastQ) {
+    // ✅ ПРОМІЖНИЙ ЗАПИС після кожного питання
+    sendData(`🔄 W TRAKCIE (${answered}/${totalQ})`);
+    showQuestion(currentIdx+1);
   } else {
     showSummary();
   }
@@ -601,13 +537,17 @@ function nextQuestion() {
 function showSummary() {
   document.getElementById('screenQuestion').classList.add('hidden');
   document.getElementById('screenSummary').classList.remove('hidden');
-  let scoreA = 0, scoreB = 0;
+  let scoreA=0, scoreB=0;
   answers.forEach(a => {
     if (!a) return;
-    if (a.part === 'A' && a.isCorrect) scoreA += 0.5;
-    if (a.part === 'B' && a.isCorrect) scoreB += 2;
+    if (a.part==='A' && a.isCorrect) scoreA += 0.5;
+    if (a.part==='B' && a.isCorrect) scoreB += 2;
   });
-  const total = Math.round((scoreA + scoreB) * 10) / 10;
+  const total = Math.round((scoreA+scoreB)*10)/10;
+
+  // ✅ ЗАПИС: учень бачить результат, але ще не натиснув "Wyślij"
+  sendData('📋 PODSUMOWANIE — czeka na wysłanie');
+
   document.getElementById('summaryContent').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;">
@@ -628,103 +568,67 @@ function showSummary() {
 }
 
 // ── TIMER ─────────────────────────────────────
-let seconds = TEST_MINUTES * 60, ended = false, timerInterval;
+let seconds=TEST_MINUTES*60, ended=false, timerInterval;
 function startTimer() {
   updateTimer();
-  timerInterval = setInterval(updateTimer, 1000);
+  timerInterval = setInterval(updateTimer,1000);
 }
 function updateTimer() {
-  const m = String(Math.floor(seconds/60)).padStart(2,'0');
-  const s = String(seconds%60).padStart(2,'0');
-  const el = document.getElementById('timer');
-  el.textContent = m+':'+s;
-  el.className = 'timer';
-  if (seconds <= 60)       el.classList.add('danger');
-  else if (seconds <= 300) el.classList.add('warn');
-  if (seconds <= 0) { clearInterval(timerInterval); submitTest(true); }
+  const m=String(Math.floor(seconds/60)).padStart(2,'0');
+  const s=String(seconds%60).padStart(2,'0');
+  const el=document.getElementById('timer');
+  el.textContent=m+':'+s;
+  el.className='timer';
+  if (seconds<=60)       el.classList.add('danger');
+  else if (seconds<=300) el.classList.add('warn');
+  if (seconds<=0) { clearInterval(timerInterval); submitTest(true); }
   seconds--;
 }
 
 // ── ANTI-CHEAT ────────────────────────────────
-let violations = 0, lastViolation = 0;
-document.addEventListener('visibilitychange', () => { if (document.hidden && !ended && testStarted) recordViolation(); });
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('keydown', e => {
+let violations=0, lastViolation=0;
+document.addEventListener('visibilitychange',()=>{ if (document.hidden && !ended && testStarted) recordViolation(); });
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
   if (e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key))||(e.ctrlKey&&e.key==='U')) e.preventDefault();
 });
+
 function recordViolation() {
-  const now = Date.now();
-  if (now - lastViolation < 2000) return;
-  lastViolation = now;
+  const now=Date.now();
+  if (now-lastViolation<2000) return;
+  lastViolation=now;
   violations++;
-  document.getElementById('vCount').textContent = violations;
-  if (violations >= MAX_VIOLATIONS) endTest();
-  else { document.getElementById('attemptsLeft').textContent = MAX_VIOLATIONS - violations; document.getElementById('overlay').classList.add('show'); }
+  document.getElementById('vCount').textContent=violations;
+  if (violations>=MAX_VIOLATIONS) endTest();
+  else {
+    document.getElementById('attemptsLeft').textContent=MAX_VIOLATIONS-violations;
+    document.getElementById('overlay').classList.add('show');
+    const answered=answers.filter(Boolean).length;
+    sendData(`⚠️ NARUSZENIE ${violations} — w trakcie (${answered}/${allQuestions.length})`);
+  }
 }
 function closeOverlay() { document.getElementById('overlay').classList.remove('show'); }
+
 function endTest() {
-  ended = true; clearInterval(timerInterval);
+  ended=true; clearInterval(timerInterval);
   document.getElementById('overlay').classList.remove('show');
   document.getElementById('ended').classList.add('show');
-  const nazwisko = document.getElementById('nazwisko').value.trim();
-  const klasa    = document.getElementById('klasa').value.trim();
-  const tAns = ['—','—','—','—'];
-  const oAns = ['—','—','—','—'];
-  answers.forEach(a => {
-    if (!a) return;
-    if (a.part === 'A') tAns[a.origIdx] = a.answer;
-    if (a.part === 'B') oAns[a.origIdx] = a.answer;
-  });
-  const now = new Date();
-  const payload = {
-    nazwisko: nazwisko || '(brak)',
-    klasa:    klasa    || '(brak)',
-    wariant,
-    data: now.toLocaleDateString('pl-PL') + ' ' + now.toLocaleTimeString('pl-PL'),
-    czas: Math.floor((TEST_MINUTES*60 - seconds) / 60) + ' min',
-    naruszenia: violations,
-    wynik: '⛔ ZABLOKOWANY',
-    t1: tAns[0], t2: tAns[1], t3: tAns[2], t4: tAns[3],
-    o5: oAns[0], o6: oAns[1], o7: oAns[2], o8: oAns[3]
-  };
-  fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) })
-    .catch(e => console.warn(e));
+  sendData('⛔ ZABLOKOWANY');
 }
 
 // ── SUBMIT ────────────────────────────────────
-async function submitTest(auto = false) {
-  const nazwisko = document.getElementById('nazwisko').value.trim();
-  const klasa    = document.getElementById('klasa').value.trim();
-  const tAns = ['—','—','—','—'];
-  const oAns = ['—','—','—','—'];
-  answers.forEach(a => {
-    if (!a) return;
-    if (a.part === 'A') tAns[a.origIdx] = a.answer;
-    if (a.part === 'B') oAns[a.origIdx] = a.answer;
-  });
-  let scoreA = 0, scoreB = 0;
-  answers.forEach(a => {
-    if (!a) return;
-    if (a.part === 'A' && a.isCorrect) scoreA += 0.5;
-    if (a.part === 'B' && a.isCorrect) scoreB += 2;
-  });
-  const total = Math.round((scoreA + scoreB) * 10) / 10;
-  const now = new Date();
-  const payload = {
-    nazwisko, klasa, wariant,
-    data: now.toLocaleDateString('pl-PL') + ' ' + now.toLocaleTimeString('pl-PL'),
-    czas: Math.floor((TEST_MINUTES*60 - seconds) / 60) + ' min',
-    naruszenia: violations,
-    wynik: total + ' / 10',
-    t1: tAns[0], t2: tAns[1], t3: tAns[2], t4: tAns[3],
-    o5: oAns[0], o6: oAns[1], o7: oAns[2], o8: oAns[3]
-  };
-  document.getElementById('btnSubmit').disabled = true;
-  document.getElementById('btnText').textContent = 'Wysyłanie...';
+async function submitTest(auto=false) {
+  document.getElementById('btnSubmit').disabled=true;
+  document.getElementById('btnText').textContent='Wysyłanie...';
+  const status = auto ? '⌛ CZAS MINĄŁ' : '✅ UKOŃCZONO';
   try {
-    await fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    await fetch(SCRIPT_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(buildPayload(status))
+    });
   } catch(e) { console.warn(e); }
-  ended = true;
+  ended=true;
   clearInterval(timerInterval);
   document.getElementById('success').classList.add('show');
 }
