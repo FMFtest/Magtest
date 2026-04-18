@@ -218,7 +218,7 @@
     </div>
   </div>
 </main>
-<footer>TestGuard</footer>
+<footer>TestGuard · Ochrona przed ściąganiem · Wszystkie działania są rejestrowane</footer>
 <div id="overlay">
   <div class="overlay-card">
     <div class="overlay-icon">⚠️</div>
@@ -241,7 +241,7 @@
 <script>
 const TEST_MINUTES   = 40;
 const MAX_VIOLATIONS = 2;
-const SCRIPT_URL     = "https://script.google.com/macros/s/AKfycbxJX6KJ-fCb5kaMbg1-T5-wiu8DFR3fwl1l-_tkMQAaN5P8ffJsbYREWVYOzAeuxUU-4w/exec";
+const SCRIPT_URL     = "https://script.google.com/macros/s/AKfycbw-DNjAMMhe5bOoqHqLRrd6kNhihZZy4J4P4sAIqsyUAWRGOH2tjpiNDSLFMcDBAZAxBA/exec";
 const SECRET_TOKEN   = "fiz2kl_2026_mP4n";
 const SESSION_ID     = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
@@ -286,7 +286,7 @@ function makeOpenA() {
     { q:`Na przewodnik o długości czynnej l = ${l5} m, umieszczony w jednorodnym polu magnetycznym o indukcji B = ${B5} T, działa siła Ampère'a F = ${F5} N. Oblicz natężenie prądu w przewodniku, jeśli kąt między kierunkiem prądu a wektorem indukcji magnetycznej wynosi α = 30°.`, unit:"A", params:`F=${F5} B=${B5} l=${l5}` },
     { q:`Prostoliniowy przewodnik o masie m = ${m6} kg i długości l = ${l6} m umieszczono w jednorodnym polu magnetycznym o indukcji B = ${B6} T prostopadle do linii indukcji. Oblicz natężenie prądu, przy którym siła Ampère'a zrównoważy siłę ciężkości (g = 10 m/s²).`, unit:"A", params:`m=${m6} B=${B6} l=${l6}` },
     { q:`Elektron wlatuje z prędkością v = ${vExp7} · 10⁶ m/s prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B7} T i zaczyna poruszać się po okręgu. Oblicz promień toru elektronu w milimetrach. Dane: e = 1,6 · 10⁻¹⁹ C, m_e = 9,1 · 10⁻³¹ kg.`, unit:"mm", params:`v=${vExp7} B=${B7}` },
-    { q:`Przewodnik o długości czynnej l = ${l8} m i masie liniowej λ = ${lambda8*1000} g/m umieszczono poziomo w jednorodnym polu magnetycznym o indukcji B = ${B8} T pod kątem α = 30° do linii indukcji. Oblicz minimalne natężenie prądu, przy którym siła Ampère'a uniesie przewodnik (g = 10 m/s²).`, unit:"A", params:`lambda=${lambda8} l=${l8} B=${B8}` }
+    { q:`Przewodnik o długości czynnej l = ${l8} m i masie liniowej λ = ${lambda8*1000} g/m umieszczono poziomo w jednorodnym polu magnetycznym o indukcji B = ${B8} T pod kątem α = 30° do linii indukcji. Oblicz minimalne natężenie prądu, przy którym siła Ampère'a uniesie przewodnik (g = 10 m/s²).`, unit:"A", params:`lambdaKg=${lambda8} l=${l8} B=${B8}` }
   ];
 }
 
@@ -298,9 +298,9 @@ function makeOpenB() {
   const lambda8 = pick([0.02,0.03,0.04,0.05,0.06]), l8 = pick([0.5,0.6,0.7,0.8,0.9,1.0]), B8 = pick([0.3,0.4,0.5,0.6,0.8]);
   return [
     { q:`Jaka powinna być indukcja magnetyczna B pola, aby siła Ampère'a zrównoważyła siłę ciężkości przewodnika o masie m = ${m5} g i długości l = ${l5} m? Natężenie prądu w przewodniku wynosi I = ${I5} A (g = 10 m/s²). Przewodnik ustaw prostopadle do linii pola.`, unit:"T", params:`m=${m5} l=${l5} I=${I5}` },
-    { q:`Na przewodnik o długości czynnej l = ${l6} m, umieszczony prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B6} T, działa siła Ampère'a F = ${F6} N. Jaki ładunek przepłynął przez przekrój poprzeczny przewodnika w czasie t = ${t6/60} min?`, unit:"C", params:`F=${F6} B=${B6} l=${l6} t=${t6}` },
+    { q:`Na przewodnik o długości czynnej l = ${l6} m, umieszczony prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B6} T, działa siła Ampère'a F = ${F6} N. Jaki ładunek przepłynął przez przekrój poprzeczny przewodnika w czasie t = ${t6/60} min?`, unit:"C", params:`I=${I6} t=${t6}` },
     { q:`Proton wlatuje z prędkością v = ${vExp7} · 10⁶ m/s prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B7} T i porusza się po okręgu. Oblicz promień toru protonu w centymetrach. Dane: e = 1,6 · 10⁻¹⁹ C, m_p = 1,67 · 10⁻²⁷ kg.`, unit:"cm", params:`v=${vExp7} B=${B7}` },
-    { q:`Przewodnik o długości czynnej l = ${l8} m i masie liniowej λ = ${lambda8*1000} g/m umieszczono poziomo prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B8} T (α = 90°). Oblicz minimalne natężenie prądu, przy którym siła Ampère'a uniesie przewodnik (g = 10 m/s²).`, unit:"A", params:`lambda=${lambda8} l=${l8} B=${B8}` }
+    { q:`Przewodnik o długości czynnej l = ${l8} m i masie liniowej λ = ${lambda8*1000} g/m umieszczono poziomo prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B8} T (α = 90°). Oblicz minimalne natężenie prądu, przy którym siła Ampère'a uniesie przewodnik (g = 10 m/s²).`, unit:"A", params:`lambdaKg=${lambda8} l=${l8} B=${B8}` }
   ];
 }
 
@@ -477,12 +477,12 @@ function calcLocalScore() {
         if (a.origIdx===0) correct=[round2(p.F/(p.B*p.l*0.5))];
         else if (a.origIdx===1) correct=[round2((p.m*10)/(p.B*p.l))];
         else if (a.origIdx===2) correct=[round2((9.1e-31*p.v*1e6)/(1.6e-19*p.B)*1e3)];
-        else if (a.origIdx===3) { const m=round2((p.lambda/1000)*p.l); correct=[round2((m*10)/(p.B*p.l*0.5))]; }
+        else if (a.origIdx===3) { const m=round2(p.lambdaKg*p.l); correct=[round2((m*10)/(p.B*p.l*0.5))]; }
       } else {
         if (a.origIdx===0) correct=[round2((p.m*0.001*10)/(p.I*p.l))];
         else if (a.origIdx===1) correct=[round2(p.I*p.t)];
         else if (a.origIdx===2) correct=[round2((1.67e-27*p.v*1e6)/(1.6e-19*p.B)*100)];
-        else if (a.origIdx===3) { const m=round2((p.lambda/1000)*p.l); correct=[round2((m*10)/(p.B*p.l))]; }
+        else if (a.origIdx===3) { const m=round2(p.lambdaKg*p.l); correct=[round2((m*10)/(p.B*p.l))]; }
       }
       if (correct) {
         const v = parseFloat(String(a.answer).replace(',','.'));
