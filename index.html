@@ -7,17 +7,10 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
     :root {
-      --bg: #f0f2f5;
-      --surface: #ffffff;
-      --surface2: #f8f9fc;
-      --border: #e2e5ed;
-      --accent: #1a56db;
-      --accent2: #0e9f6e;
-      --danger: #e02424;
-      --warn: #d97706;
-      --text: #111827;
-      --muted: #6b7280;
-      --radius: 14px;
+      --bg: #f0f2f5; --surface: #ffffff; --surface2: #f8f9fc;
+      --border: #e2e5ed; --accent: #1a56db; --accent2: #0e9f6e;
+      --danger: #e02424; --warn: #d97706; --text: #111827;
+      --muted: #6b7280; --radius: 14px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; display:flex; flex-direction:column; }
@@ -49,7 +42,13 @@
     label input { font-family:'DM Sans',sans-serif; font-size:15px; padding:11px 14px; border:1.5px solid var(--border); border-radius:10px; outline:none; transition:border-color .2s; background:var(--surface2); color:var(--text); }
     label input:focus { border-color:var(--accent); background:#fff; }
     label input.error { border-color:var(--danger); }
-    .btn-start { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; background:var(--accent); color:#fff; border:none; border-radius:12px; padding:16px 48px; cursor:pointer; transition:opacity .2s, transform .15s; width:100%; margin-top:8px; }
+    .privacy-notice { background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:16px 18px; margin-top:16px; display:flex; gap:12px; align-items:flex-start; }
+    .privacy-notice .pn-icon { font-size:20px; flex-shrink:0; margin-top:2px; }
+    .privacy-notice .pn-text { font-size:12px; color:#1e40af; line-height:1.6; }
+    .privacy-checkbox { display:flex; align-items:flex-start; gap:10px; margin-top:14px; cursor:pointer; }
+    .privacy-checkbox input[type="checkbox"] { width:18px; height:18px; margin-top:2px; flex-shrink:0; cursor:pointer; accent-color:var(--accent); }
+    .privacy-checkbox span { font-size:13px; color:var(--muted); line-height:1.5; }
+    .btn-start { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; background:var(--accent); color:#fff; border:none; border-radius:12px; padding:16px 48px; cursor:pointer; transition:opacity .2s, transform .15s; width:100%; margin-top:12px; }
     .btn-start:hover    { opacity:.88; transform:translateY(-1px); }
     .btn-start:disabled { opacity:.35; cursor:not-allowed; transform:none; }
     .progress-wrap { width:100%; max-width:760px; }
@@ -157,6 +156,16 @@
           <input type="text" id="klasa" placeholder="np. 2A" autocomplete="off" oninput="checkStart()"/>
         </label>
       </div>
+      <div class="privacy-notice">
+        <div class="pn-icon">🔒</div>
+        <div class="pn-text">
+          Podczas rozwiązywania testu system rejestruje wybrane informacje techniczne: czas rozpoczęcia i zakończenia testu oraz zdarzenia związane z opuszczeniem okna testowego (np. zmianę karty przeglądarki). Dane te są przetwarzane wyłącznie w celu zapewnienia rzetelności procesu oceniania oraz przeciwdziałania nieuczciwym praktykom.
+        </div>
+      </div>
+      <label class="privacy-checkbox">
+        <input type="checkbox" id="privacyCheck" onchange="checkStart()"/>
+        <span>Zapoznałem/am się z informacją o przetwarzaniu danych i wyrażam zgodę na rozpoczęcie sprawdzianu.</span>
+      </label>
       <button class="btn-start" id="btnStart" disabled onclick="startTest()">
         Rozpocznij sprawdzian →
       </button>
@@ -174,10 +183,10 @@
       <div id="sectionBadge" class="section-badge partA">Część A · 0,5 pkt</div>
       <div class="q-text" id="qText"></div>
       <div class="options hidden" id="optionsBlock">
-        <label class="option" id="opt0" onclick="selectOpt(0,this)"><input type="radio" name="qopt" value="0"/><div class="opt-key">A</div><div class="opt-text" id="optText0"></div></label>
-        <label class="option" id="opt1" onclick="selectOpt(1,this)"><input type="radio" name="qopt" value="1"/><div class="opt-key">B</div><div class="opt-text" id="optText1"></div></label>
-        <label class="option" id="opt2" onclick="selectOpt(2,this)"><input type="radio" name="qopt" value="2"/><div class="opt-key">C</div><div class="opt-text" id="optText2"></div></label>
-        <label class="option" id="opt3" onclick="selectOpt(3,this)"><input type="radio" name="qopt" value="3"/><div class="opt-key">D</div><div class="opt-text" id="optText3"></div></label>
+        <label class="option" id="opt0"><input type="radio" name="qopt" value="0"/><div class="opt-key">A</div><div class="opt-text" id="optText0"></div></label>
+        <label class="option" id="opt1"><input type="radio" name="qopt" value="1"/><div class="opt-key">B</div><div class="opt-text" id="optText1"></div></label>
+        <label class="option" id="opt2"><input type="radio" name="qopt" value="2"/><div class="opt-key">C</div><div class="opt-text" id="optText2"></div></label>
+        <label class="option" id="opt3"><input type="radio" name="qopt" value="3"/><div class="opt-key">D</div><div class="opt-text" id="optText3"></div></label>
       </div>
       <div class="hidden" id="numericBlock">
         <div class="notebook-warn">
@@ -209,7 +218,7 @@
     </div>
   </div>
 </main>
-<footer>TestGuard · Ochrona przed ściąganiem · Wszystkie działania są rejestrowane</footer>
+<footer>TestGuard</footer>
 <div id="overlay">
   <div class="overlay-card">
     <div class="overlay-icon">⚠️</div>
@@ -230,19 +239,12 @@
   <div class="success-sub">Twoje odpowiedzi zostały zapisane.<br>Możesz zamknąć tę stronę.</div>
 </div>
 <script>
-// ══════════════════════════════════════════════
-//  ⚙️  USTAWIENIA
-// ══════════════════════════════════════════════
 const TEST_MINUTES   = 40;
 const MAX_VIOLATIONS = 2;
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwYvyjkZdop4dhkP9EGhGDAqCUtnRadq06PAkbjJUi4-DM5rVjee3hl1V5o5hGKkhrccQ/exec";
+const SCRIPT_URL     = "https://script.google.com/macros/s/AKfycbxJX6KJ-fCb5kaMbg1-T5-wiu8DFR3fwl1l-_tkMQAaN5P8ffJsbYREWVYOzAeuxUU-4w/exec";
+const SECRET_TOKEN   = "fiz2kl_2026_mP4n";
+const SESSION_ID     = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
-// ══════════════════════════════════════════════
-//  🔑  UNIKALNY KLUCZ SESJI
-// ══════════════════════════════════════════════
-const SESSION_ID = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-
-// ── POMOCNICZE ────────────────────────────────
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -260,113 +262,58 @@ function rnd(min, max, step = 1) {
 function round2(v) { return +v.toFixed(2); }
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-// ══════════════════════════════════════════════
-//  WARIANT A — pytania testowe
-// ══════════════════════════════════════════════
 const testA = [
-  {
-    q: "Jak zmieni się siła Ampère'a, jeśli natężenie prądu w przewodniku zwiększymy dwukrotnie, a pozostałe warunki nie ulegną zmianie?",
-    opts: ["Siła Ampère'a nie zmieni się.","Siła Ampère'a zmniejszy się dwukrotnie.","Siła Ampère'a zwiększy się dwukrotnie.","Działanie siły Ampère'a ustanie."],
-    ans: 2
-  },
-  {
-    q: "Jak wyznaczamy kierunek siły działającej na przewodnik z prądem w polu magnetycznym?",
-    opts: ["Korzystając z reguły śruby (prawej ręki).","Korzystając z reguły lewej ręki.","Korzystając z reguły prawej ręki w wersji dla prądu.","Korzystając z zasady superpozycji."],
-    ans: 1
-  },
-  {
-    q: "Cząstka naładowana porusza się równolegle do linii sił pola magnetycznego. Jaka siła działa na tę cząstkę?",
-    opts: ["Siła Lorentza o wartości maksymalnej.","Siła Lorentza o wartości zależnej od prędkości.","Siła Lorentza równa zeru.","Siła Ampère'a skierowana prostopadle do ruchu."],
-    ans: 2
-  },
-  {
-    q: "Przewodnik z prądem I = 2 A i długością czynną l = 0,5 m umieszczono prostopadle do jednorodnego pola magnetycznego o indukcji B = 0,4 T. Która odpowiedź podaje prawidłową wartość siły Ampère'a oraz właściwy sposób wyznaczenia jej kierunku?",
-    opts: ["F = 0,4 N; kierunek wyznaczamy regułą prawej ręki.","F = 0,4 N; kierunek wyznaczamy regułą lewej ręki.","F = 0,8 N; kierunek wyznaczamy regułą lewej ręki.","F = 0,8 N; kierunek wyznaczamy regułą prawej ręki."],
-    ans: 2
-  }
+  { q:"Jak zmieni się siła Ampère'a, jeśli natężenie prądu w przewodniku zwiększymy dwukrotnie, a pozostałe warunki nie ulegną zmianie?", opts:["Siła Ampère'a nie zmieni się.","Siła Ampère'a zmniejszy się dwukrotnie.","Siła Ampère'a zwiększy się dwukrotnie.","Działanie siły Ampère'a ustanie."] },
+  { q:"Jak wyznaczamy kierunek siły działającej na przewodnik z prądem w polu magnetycznym?", opts:["Korzystając z reguły śruby (prawej ręki).","Korzystając z reguły lewej ręki.","Korzystając z reguły prawej ręki w wersji dla prądu.","Korzystając z zasady superpozycji."] },
+  { q:"Cząstka naładowana porusza się równolegle do linii sił pola magnetycznego. Jaka siła działa na tę cząstkę?", opts:["Siła Lorentza o wartości maksymalnej.","Siła Lorentza o wartości zależnej od prędkości.","Siła Lorentza równa zeru.","Siła Ampère'a skierowana prostopadle do ruchu."] },
+  { q:"Przewodnik z prądem I = 2 A i długością czynną l = 0,5 m umieszczono prostopadle do jednorodnego pola magnetycznego o indukcji B = 0,4 T. Która odpowiedź podaje prawidłową wartość siły Ampère'a oraz właściwy sposób wyznaczenia jej kierunku?", opts:["F = 0,4 N; kierunek wyznaczamy regułą prawej ręki.","F = 0,4 N; kierunek wyznaczamy regułą lewej ręki.","F = 0,8 N; kierunek wyznaczamy regułą lewej ręki.","F = 0,8 N; kierunek wyznaczamy regułą prawej ręki."] }
 ];
 
-// ══════════════════════════════════════════════
-//  WARIANT B — pytania testowe
-// ══════════════════════════════════════════════
 const testB = [
-  {
-    q: "Jak zmieni się siła Ampère'a, jeśli czynną długość przewodnika zmniejszymy dwukrotnie, a pozostałe warunki nie ulegną zmianie?",
-    opts: ["Działanie siły Ampère'a ustanie.","Siła Ampère'a zmniejszy się dwukrotnie.","Siła Ampère'a zwiększy się dwukrotnie.","Siła Ampère'a nie zmieni się."],
-    ans: 1
-  },
-  {
-    q: "W jaki sposób można zmienić kierunek ruchu przewodnika z prądem w polu magnetycznym?",
-    opts: ["Zwiększyć natężenie prądu w przewodniku.","Zmniejszyć natężenie prądu w przewodniku.","Zamienić miejscami bieguny magnesu.","Zwiększyć długość czynną przewodnika."],
-    ans: 2
-  },
-  {
-    q: "Cząstka naładowana porusza się prostopadle do linii sił pola magnetycznego. Siła Lorentza działająca na tę cząstkę jest:",
-    opts: ["Równa zeru.","Skierowana zgodnie z ruchem cząstki.","Maksymalna i prostopadła do prędkości cząstki.","Skierowana przeciwnie do ruchu cząstki."],
-    ans: 2
-  },
-  {
-    q: "Elektron porusza się z prędkością v w polu magnetycznym o indukcji B. Kąt między wektorem prędkości a wektorem indukcji wynosi α = 60°. Które wyrażenie poprawnie opisuje siłę Lorentza działającą na elektron?",
-    opts: ["F_L = e · v · B","F_L = e · v · B · cos 60° = ½ · e · v · B","F_L = e · v · B · sin 60° = (√3/2) · e · v · B","F_L = e · v · B · sin 30° = ½ · e · v · B"],
-    ans: 2
-  }
+  { q:"Jak zmieni się siła Ampère'a, jeśli czynną długość przewodnika zmniejszymy dwukrotnie, a pozostałe warunki nie ulegną zmianie?", opts:["Działanie siły Ampère'a ustanie.","Siła Ampère'a zmniejszy się dwukrotnie.","Siła Ampère'a zwiększy się dwukrotnie.","Siła Ampère'a nie zmieni się."] },
+  { q:"W jaki sposób można zmienić kierunek ruchu przewodnika z prądem w polu magnetycznym?", opts:["Zwiększyć natężenie prądu w przewodniku.","Zmniejszyć natężenie prądu w przewodniku.","Zamienić miejscami bieguny magnesu.","Zwiększyć długość czynną przewodnika."] },
+  { q:"Cząstka naładowana porusza się prostopadle do linii sił pola magnetycznego. Siła Lorentza działająca na tę cząstkę jest:", opts:["Równa zeru.","Skierowana zgodnie z ruchem cząstki.","Maksymalna i prostopadła do prędkości cząstki.","Skierowana przeciwnie do ruchu cząstki."] },
+  { q:"Elektron porusza się z prędkością v w polu magnetycznym o indukcji B. Kąt między wektorem prędkości a wektorem indukcji wynosi α = 60°. Które wyrażenie poprawnie opisuje siłę Lorentza działającą na elektron?", opts:["F_L = e · v · B","F_L = e · v · B · cos 60° = ½ · e · v · B","F_L = e · v · B · sin 60° = (√3/2) · e · v · B","F_L = e · v · B · sin 30° = ½ · e · v · B"] }
 ];
 
-// ══════════════════════════════════════════════
-//  WARIANT A — zadania obliczeniowe
-// ══════════════════════════════════════════════
 function makeOpenA() {
   const I5 = rnd(5,20,5), B5 = pick([0.1,0.2,0.3,0.4]), l5 = pick([0.5,1.0,1.5]);
-  const F5 = round2(B5*I5*l5*0.5), ans5 = round2(F5/(B5*l5*0.5));
+  const F5 = round2(B5*I5*l5*0.5);
   const m6 = rnd(1,4,1), B6 = rnd(10,20,5), l6 = pick([0.25,0.50,0.75,1.00]);
-  const ans6 = round2((m6*10)/(B6*l6));
-  const vExp7 = rnd(2,8,1), v7 = vExp7*1e6, B7 = pick([0.01,0.02,0.03,0.04,0.05]);
-  const ans7 = round2((9.1e-31*v7)/(1.6e-19*B7)*1e3);
+  const vExp7 = rnd(2,8,1), B7 = pick([0.01,0.02,0.03,0.04,0.05]);
   const lambda8 = pick([0.02,0.03,0.04,0.05,0.06,0.08]), l8 = pick([0.4,0.5,0.6,0.7,0.8,0.9]), B8 = pick([0.2,0.3,0.4,0.5,0.6]);
-  const m8 = round2(lambda8*l8), ans8 = round2((m8*10)/(B8*l8*0.5));
   return [
-    { q:`Na przewodnik o długości czynnej l = ${l5} m, umieszczony w jednorodnym polu magnetycznym o indukcji B = ${B5} T, działa siła Ampère'a F = ${F5} N. Oblicz natężenie prądu w przewodniku, jeśli kąt między kierunkiem prądu a wektorem indukcji magnetycznej wynosi α = 30°.`, unit:"A", ans:[ans5] },
-    { q:`Prostoliniowy przewodnik o masie m = ${m6} kg i długości l = ${l6} m umieszczono w jednorodnym polu magnetycznym o indukcji B = ${B6} T prostopadle do linii indukcji. Oblicz natężenie prądu, przy którym siła Ampère'a zrównoważy siłę ciężkości (g = 10 m/s²).`, unit:"A", ans:[ans6] },
-    { q:`Elektron wlatuje z prędkością v = ${vExp7} · 10⁶ m/s prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B7} T i zaczyna poruszać się po okręgu. Oblicz promień toru elektronu w milimetrach. Dane: e = 1,6 · 10⁻¹⁹ C, m_e = 9,1 · 10⁻³¹ kg.`, unit:"mm", ans:[ans7] },
-    { q:`Przewodnik o długości czynnej l = ${l8} m i masie liniowej λ = ${lambda8*1000} g/m umieszczono poziomo w jednorodnym polu magnetycznym o indukcji B = ${B8} T pod kątem α = 30° do linii indukcji. Oblicz minimalne natężenie prądu, przy którym siła Ampère'a uniesie przewodnik (g = 10 m/s²).`, unit:"A", ans:[ans8] }
+    { q:`Na przewodnik o długości czynnej l = ${l5} m, umieszczony w jednorodnym polu magnetycznym o indukcji B = ${B5} T, działa siła Ampère'a F = ${F5} N. Oblicz natężenie prądu w przewodniku, jeśli kąt między kierunkiem prądu a wektorem indukcji magnetycznej wynosi α = 30°.`, unit:"A", params:`F=${F5} B=${B5} l=${l5}` },
+    { q:`Prostoliniowy przewodnik o masie m = ${m6} kg i długości l = ${l6} m umieszczono w jednorodnym polu magnetycznym o indukcji B = ${B6} T prostopadle do linii indukcji. Oblicz natężenie prądu, przy którym siła Ampère'a zrównoważy siłę ciężkości (g = 10 m/s²).`, unit:"A", params:`m=${m6} B=${B6} l=${l6}` },
+    { q:`Elektron wlatuje z prędkością v = ${vExp7} · 10⁶ m/s prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B7} T i zaczyna poruszać się po okręgu. Oblicz promień toru elektronu w milimetrach. Dane: e = 1,6 · 10⁻¹⁹ C, m_e = 9,1 · 10⁻³¹ kg.`, unit:"mm", params:`v=${vExp7} B=${B7}` },
+    { q:`Przewodnik o długości czynnej l = ${l8} m i masie liniowej λ = ${lambda8*1000} g/m umieszczono poziomo w jednorodnym polu magnetycznym o indukcji B = ${B8} T pod kątem α = 30° do linii indukcji. Oblicz minimalne natężenie prądu, przy którym siła Ampère'a uniesie przewodnik (g = 10 m/s²).`, unit:"A", params:`lambda=${lambda8} l=${l8} B=${B8}` }
   ];
 }
 
-// ══════════════════════════════════════════════
-//  WARIANT B — zadania obliczeniowe
-// ══════════════════════════════════════════════
 function makeOpenB() {
   const m5 = rnd(2,8,1), I5 = rnd(5,15,5), l5 = pick([0.1,0.2,0.3,0.4]);
-  const ans5 = round2((m5*0.001*10)/(I5*l5));
   const l6 = pick([0.2,0.3,0.4,0.5]), B6 = pick([0.2,0.3,0.4,0.5,0.6]), I6 = rnd(5,20,5);
-  const F6 = round2(B6*I6*l6), t6 = rnd(1,4,1)*60, ans6 = round2(I6*t6);
-  const vExp7 = rnd(1,5,1), v7 = vExp7*1e6, B7 = pick([0.1,0.2,0.3]);
-  const ans7 = round2((1.67e-27*v7)/(1.6e-19*B7)*100);
+  const F6 = round2(B6*I6*l6), t6 = rnd(1,4,1)*60;
+  const vExp7 = rnd(1,5,1), B7 = pick([0.1,0.2,0.3]);
   const lambda8 = pick([0.02,0.03,0.04,0.05,0.06]), l8 = pick([0.5,0.6,0.7,0.8,0.9,1.0]), B8 = pick([0.3,0.4,0.5,0.6,0.8]);
-  const m8 = round2(lambda8*l8), ans8 = round2((m8*10)/(B8*l8));
   return [
-    { q:`Jaka powinna być indukcja magnetyczna B pola, aby siła Ampère'a zrównoważyła siłę ciężkości przewodnika o masie m = ${m5} g i długości l = ${l5} m? Natężenie prądu w przewodniku wynosi I = ${I5} A (g = 10 m/s²). Przewodnik ustaw prostopadle do linii pola.`, unit:"T", ans:[ans5] },
-    { q:`Na przewodnik o długości czynnej l = ${l6} m, umieszczony prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B6} T, działa siła Ampère'a F = ${F6} N. Jaki ładunek przepłynął przez przekrój poprzeczny przewodnika w czasie t = ${t6/60} min?`, unit:"C", ans:[ans6] },
-    { q:`Proton wlatuje z prędkością v = ${vExp7} · 10⁶ m/s prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B7} T i porusza się po okręgu. Oblicz promień toru protonu w centymetrach. Dane: e = 1,6 · 10⁻¹⁹ C, m_p = 1,67 · 10⁻²⁷ kg.`, unit:"cm", ans:[ans7] },
-    { q:`Przewodnik o długości czynnej l = ${l8} m i masie liniowej λ = ${lambda8*1000} g/m umieszczono poziomo prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B8} T (α = 90°). Oblicz minimalne natężenie prądu, przy którym siła Ampère'a uniesie przewodnik (g = 10 m/s²).`, unit:"A", ans:[ans8] }
+    { q:`Jaka powinna być indukcja magnetyczna B pola, aby siła Ampère'a zrównoważyła siłę ciężkości przewodnika o masie m = ${m5} g i długości l = ${l5} m? Natężenie prądu w przewodniku wynosi I = ${I5} A (g = 10 m/s²). Przewodnik ustaw prostopadle do linii pola.`, unit:"T", params:`m=${m5} l=${l5} I=${I5}` },
+    { q:`Na przewodnik o długości czynnej l = ${l6} m, umieszczony prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B6} T, działa siła Ampère'a F = ${F6} N. Jaki ładunek przepłynął przez przekrój poprzeczny przewodnika w czasie t = ${t6/60} min?`, unit:"C", params:`F=${F6} B=${B6} l=${l6} t=${t6}` },
+    { q:`Proton wlatuje z prędkością v = ${vExp7} · 10⁶ m/s prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B7} T i porusza się po okręgu. Oblicz promień toru protonu w centymetrach. Dane: e = 1,6 · 10⁻¹⁹ C, m_p = 1,67 · 10⁻²⁷ kg.`, unit:"cm", params:`v=${vExp7} B=${B7}` },
+    { q:`Przewodnik o długości czynnej l = ${l8} m i masie liniowej λ = ${lambda8*1000} g/m umieszczono poziomo prostopadle do jednorodnego pola magnetycznego o indukcji B = ${B8} T (α = 90°). Oblicz minimalne natężenie prądu, przy którym siła Ampère'a uniesie przewodnik (g = 10 m/s²).`, unit:"A", params:`lambda=${lambda8} l=${l8} B=${B8}` }
   ];
 }
 
-// ── BUDOWANIE WARIANTU ────────────────────────
 function buildVariant(id) {
   const testQ = id==='B' ? testB : testA;
   const openQ = id==='B' ? makeOpenB() : makeOpenA();
   const shuffledTest = shuffle(testQ.map((q)=>({...q, part:'A'})));
   const openWithPart = openQ.map((q,i)=>({...q, origIdx:i, part:'B'}));
-  return [
-    ...shuffledTest.map((q,i)=>({...q, origIdx:i})),
-    ...openWithPart
-  ];
+  return [...shuffledTest.map((q,i)=>({...q, origIdx:i})), ...openWithPart];
 }
 
-// ── INIT ──────────────────────────────────────
-const params  = new URLSearchParams(window.location.search);
-const wariant = (params.get('wariant') || 'A').toUpperCase();
+const urlParams = new URLSearchParams(window.location.search);
+const wariant   = (urlParams.get('wariant') || 'A').toUpperCase();
 document.getElementById('wariantLabel').textContent = 'Wariant ' + wariant;
 
 let allQuestions = [];
@@ -375,38 +322,30 @@ let answers      = [];
 let testStarted  = false;
 let startTime    = null;
 
-// ══════════════════════════════════════════════
-//  📡  FUNKCJA WYSYŁANIA DANYCH
-// ══════════════════════════════════════════════
 function buildPayload(status) {
   const nazwisko = document.getElementById('nazwisko').value.trim() || '(brak)';
   const klasa    = document.getElementById('klasa').value.trim()    || '(brak)';
-  const tAns = ['—','—','—','—'];
-  const oAns = ['—','—','—','—'];
+  const tAns   = ['—','—','—','—'];
+  const oAns   = ['—','—','—','—'];
+  const oParams = ['—','—','—','—'];
   answers.forEach(a => {
     if (!a) return;
     if (a.part==='A') tAns[a.origIdx] = a.answer;
-    if (a.part==='B') oAns[a.origIdx] = a.answer;
+    if (a.part==='B') { oAns[a.origIdx] = a.answer; oParams[a.origIdx] = a.params || '—'; }
   });
-  let scoreA=0, scoreB=0;
-  answers.forEach(a => {
-    if (!a) return;
-    if (a.part==='A' && a.isCorrect) scoreA += 0.5;
-    if (a.part==='B' && a.isCorrect) scoreB += 2;
-  });
-  const total = Math.round((scoreA+scoreB)*10)/10;
   const now = new Date();
   const elapsed = startTime ? Math.floor((Date.now()-startTime)/60000) : 0;
   return {
+    token: SECRET_TOKEN,
     sessionId: SESSION_ID,
     nazwisko, klasa, wariant,
     data: now.toLocaleDateString('pl-PL') + ' ' + now.toLocaleTimeString('pl-PL'),
     czas: elapsed + ' min',
     naruszenia: violations,
     status,
-    wynik: ['✅ UKOŃCZONO','⌛ CZAS MINĄŁ'].includes(status) ? (total+' / 10') : '—',
     t1:tAns[0], t2:tAns[1], t3:tAns[2], t4:tAns[3],
-    o5:oAns[0], o6:oAns[1], o7:oAns[2], o8:oAns[3]
+    o5:oAns[0], o6:oAns[1], o7:oAns[2], o8:oAns[3],
+    p5:oParams[0], p6:oParams[1], p7:oParams[2], p8:oParams[3]
   };
 }
 
@@ -418,11 +357,11 @@ function sendData(status) {
   }).catch(e => console.warn('Błąd wysyłania:', e));
 }
 
-// ── START ─────────────────────────────────────
 function checkStart() {
   const n = document.getElementById('nazwisko').value.trim();
   const k = document.getElementById('klasa').value.trim();
-  document.getElementById('btnStart').disabled = !(n.length>=2 && k.length>=1);
+  const c = document.getElementById('privacyCheck').checked;
+  document.getElementById('btnStart').disabled = !(n.length>=2 && k.length>=1 && c);
 }
 
 function startTest() {
@@ -430,32 +369,28 @@ function startTest() {
   const k = document.getElementById('klasa').value.trim();
   if (!n || !k) return;
   allQuestions = buildVariant(wariant);
-  answers = new Array(allQuestions.length).fill(null);
-  testStarted = true;
-  startTime   = Date.now();
-
-  // ✅ ПЕРШИЙ ЗАПИС: учень розпочав тест
+  answers      = new Array(allQuestions.length).fill(null);
+  testStarted  = true;
+  startTime    = Date.now();
   sendData('⏳ ROZPOCZĘTO');
-
   document.getElementById('screenStart').classList.add('hidden');
   document.getElementById('screenQuestion').classList.remove('hidden');
   startTimer();
   showQuestion(0);
 }
 
-// ── RENDER QUESTION ───────────────────────────
 function showQuestion(idx) {
   currentIdx = idx;
-  const q = allQuestions[idx];
+  const q     = allQuestions[idx];
   const total = allQuestions.length;
   document.getElementById('progressLabel').textContent = `Pytanie ${idx+1} z ${total}`;
   document.getElementById('progressPts').textContent   = q.part==='A' ? '0,5 pkt' : '2 pkt';
   document.getElementById('progressFill').style.width  = ((idx/total)*100)+'%';
   const badge = document.getElementById('sectionBadge');
-  badge.className = 'section-badge '+(q.part==='A'?'partA':'partB');
+  badge.className   = 'section-badge '+(q.part==='A'?'partA':'partB');
   badge.textContent = q.part==='A' ? 'Część A · 0,5 pkt' : 'Część B · 2 pkt';
   document.getElementById('qText').textContent = q.q;
-  document.getElementById('btnNext').disabled = true;
+  document.getElementById('btnNext').disabled   = true;
   document.getElementById('btnNext').textContent = idx===total-1 ? 'Zakończ sprawdzian →' : 'Dalej →';
   const optBlock = document.getElementById('optionsBlock');
   const numBlock = document.getElementById('numericBlock');
@@ -470,7 +405,7 @@ function showQuestion(idx) {
       optEl.querySelector('input').checked = false;
       optEl.querySelector('.opt-key').textContent  = letters[displayPos];
       optEl.querySelector('.opt-text').textContent = q.opts[origOpt];
-      optEl.onclick = (function(op,el){ return function(){ selectOpt(op,el,origOpt); }; })(displayPos,optEl);
+      optEl.onclick = (function(op,el,oo){ return function(){ selectOpt(op,el,oo); }; })(displayPos,optEl,origOpt);
     });
     q._optMap = optIndices;
   } else {
@@ -506,68 +441,80 @@ function nextQuestion() {
   const q = allQuestions[currentIdx];
   if (q.part==='A') {
     const letters = ['A','B','C','D'];
-    answers[currentIdx] = {
-      part:'A', origIdx:q.origIdx,
-      answer: letters[selectedOrigOptIdx],
-      isCorrect: selectedOrigOptIdx===q.ans
-    };
+    answers[currentIdx] = { part:'A', origIdx:q.origIdx, answer:letters[selectedOrigOptIdx] };
     selectedOptDisplayIdx = null;
     selectedOrigOptIdx    = null;
   } else {
     const raw = document.getElementById('numericAns').value.trim();
-    const val = parseFloat(raw.replace(',','.'));
-    const isCorrect = !isNaN(val) && q.ans.some(a => Math.abs(val-a)<=Math.max(0.15,Math.abs(a)*0.05));
-    answers[currentIdx] = { part:'B', origIdx:q.origIdx, answer:raw, isCorrect };
+    answers[currentIdx] = { part:'B', origIdx:q.origIdx, answer:raw, params:q.params||'' };
   }
-
   const answered = answers.filter(Boolean).length;
   const totalQ   = allQuestions.length;
   const isLastQ  = currentIdx+1 >= totalQ;
-
   if (!isLastQ) {
-    // ✅ ПРОМІЖНИЙ ЗАПИС після кожного питання
     sendData(`🔄 W TRAKCIE (${answered}/${totalQ})`);
     showQuestion(currentIdx+1);
   } else {
+    sendData('✅ UKOŃCZONO');
     showSummary();
   }
 }
 
-// ── SUMMARY ───────────────────────────────────
-function showSummary() {
-  document.getElementById('screenQuestion').classList.add('hidden');
-  document.getElementById('screenSummary').classList.remove('hidden');
+function calcLocalScore() {
+  const correctA = { A:[2,1,2,2], B:[1,2,2,2] };
   let scoreA=0, scoreB=0;
   answers.forEach(a => {
     if (!a) return;
-    if (a.part==='A' && a.isCorrect) scoreA += 0.5;
-    if (a.part==='B' && a.isCorrect) scoreB += 2;
+    if (a.part==='A') {
+      const userIdx = ['A','B','C','D'].indexOf(a.answer);
+      if (userIdx === (correctA[wariant]||[])[a.origIdx]) scoreA += 0.5;
+    }
+    if (a.part==='B') {
+      const p = {};
+      (a.params||'').split(' ').forEach(s => { const [k,v]=s.split('='); if(k&&v) p[k]=parseFloat(v); });
+      let correct = null;
+      if (wariant==='A') {
+        if (a.origIdx===0) correct=[round2(p.F/(p.B*p.l*0.5))];
+        else if (a.origIdx===1) correct=[round2((p.m*10)/(p.B*p.l))];
+        else if (a.origIdx===2) correct=[round2((9.1e-31*p.v*1e6)/(1.6e-19*p.B)*1e3)];
+        else if (a.origIdx===3) { const m=round2((p.lambda/1000)*p.l); correct=[round2((m*10)/(p.B*p.l*0.5))]; }
+      } else {
+        if (a.origIdx===0) correct=[round2((p.m*0.001*10)/(p.I*p.l))];
+        else if (a.origIdx===1) correct=[round2(p.I*p.t)];
+        else if (a.origIdx===2) correct=[round2((1.67e-27*p.v*1e6)/(1.6e-19*p.B)*100)];
+        else if (a.origIdx===3) { const m=round2((p.lambda/1000)*p.l); correct=[round2((m*10)/(p.B*p.l))]; }
+      }
+      if (correct) {
+        const v = parseFloat(String(a.answer).replace(',','.'));
+        if (!isNaN(v) && correct.some(c=>Math.abs(v-c)<=Math.max(0.15,Math.abs(c)*0.05))) scoreB+=2;
+      }
+    }
   });
-  const total = Math.round((scoreA+scoreB)*10)/10;
+  return { scoreA, scoreB, total:Math.round((scoreA+scoreB)*10)/10 };
+}
 
-  // ✅ ЗАПИС: учень бачить результат, але ще не натиснув "Wyślij"
-  sendData('📋 PODSUMOWANIE — czeka na wysłanie');
-
+function showSummary() {
+  document.getElementById('screenQuestion').classList.add('hidden');
+  document.getElementById('screenSummary').classList.remove('hidden');
   document.getElementById('summaryContent').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;">
         <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Część A (testowa)</div>
-        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent);">${scoreA} / 2</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent);">? / 2</div>
       </div>
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;">
         <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Część B (obliczeniowa)</div>
-        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent2);">${scoreB} / 8</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent2);">? / 8</div>
       </div>
     </div>
     <div style="background:var(--text);border-radius:10px;padding:16px;text-align:center;">
       <div style="font-size:12px;color:#9ca3af;margin-bottom:4px;">Łączny wynik</div>
-      <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;">${total} / 10</div>
+      <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;">? / 10</div>
     </div>
     <p style="margin-top:14px;font-size:12px;color:var(--muted);font-style:italic;">Wynik zostanie wysłany do nauczyciela po kliknięciu przycisku poniżej.</p>
   `;
 }
 
-// ── TIMER ─────────────────────────────────────
 let seconds=TEST_MINUTES*60, ended=false, timerInterval;
 function startTimer() {
   updateTimer();
@@ -581,11 +528,20 @@ function updateTimer() {
   el.className='timer';
   if (seconds<=60)       el.classList.add('danger');
   else if (seconds<=300) el.classList.add('warn');
-  if (seconds<=0) { clearInterval(timerInterval); submitTest(true); }
+  if (seconds<=0) { clearInterval(timerInterval); autoTimeEnd(); }
   seconds--;
 }
 
-// ── ANTI-CHEAT ────────────────────────────────
+function autoTimeEnd() {
+  if (ended) return;
+  ended=true;
+  clearInterval(timerInterval);
+  sendData('⌛ CZAS MINĄŁ');
+  document.getElementById('success').classList.add('show');
+  document.querySelector('#success .success-title').textContent = 'Czas minął!';
+  document.querySelector('#success .success-sub').textContent   = 'Sprawdzian zakończony automatycznie. Twoje odpowiedzi zostały zapisane.';
+}
+
 let violations=0, lastViolation=0;
 document.addEventListener('visibilitychange',()=>{ if (document.hidden && !ended && testStarted) recordViolation(); });
 document.addEventListener('contextmenu',e=>e.preventDefault());
@@ -616,21 +572,31 @@ function endTest() {
   sendData('⛔ ZABLOKOWANY');
 }
 
-// ── SUBMIT ────────────────────────────────────
 async function submitTest(auto=false) {
   document.getElementById('btnSubmit').disabled=true;
   document.getElementById('btnText').textContent='Wysyłanie...';
-  const status = auto ? '⌛ CZAS MINĄŁ' : '✅ UKOŃCZONO';
-  try {
-    await fetch(SCRIPT_URL, {
-      method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(buildPayload(status))
-    });
-  } catch(e) { console.warn(e); }
   ended=true;
   clearInterval(timerInterval);
-  document.getElementById('success').classList.add('show');
+  const { scoreA, scoreB, total } = calcLocalScore();
+  document.getElementById('summaryContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Część A (testowa)</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent);">${scoreA} / 2</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Część B (obliczeniowa)</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent2);">${scoreB} / 8</div>
+      </div>
+    </div>
+    <div style="background:var(--text);border-radius:10px;padding:16px;text-align:center;">
+      <div style="font-size:12px;color:#9ca3af;margin-bottom:4px;">Łączny wynik</div>
+      <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;">${total} / 10</div>
+    </div>
+    <p style="margin-top:14px;font-size:12px;color:var(--accent2);font-style:italic;font-weight:600;">✅ Wyniki zostały wysłane do nauczyciela.</p>
+  `;
+  document.getElementById('btnSubmit').style.display='none';
+  document.querySelector('.submit-note').style.display='none';
 }
 </script>
 </body>
