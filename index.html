@@ -268,7 +268,6 @@ const testA = [
   { q:"Cząstka naładowana porusza się równolegle do linii sił pola magnetycznego. Jaka siła działa na tę cząstkę?", opts:["Siła Lorentza o wartości maksymalnej.","Siła Lorentza o wartości zależnej od prędkości.","Siła Lorentza równa zeru.","Siła Ampère'a skierowana prostopadle do ruchu."] },
   { q:"Przewodnik z prądem I = 2 A i długością czynną l = 0,5 m umieszczono prostopadle do jednorodnego pola magnetycznego o indukcji B = 0,4 T. Która odpowiedź podaje prawidłową wartość siły Ampère'a oraz właściwy sposób wyznaczenia jej kierunku?", opts:["F = 0,4 N; kierunek wyznaczamy regułą prawej ręki.","F = 0,4 N; kierunek wyznaczamy regułą lewej ręki.","F = 0,8 N; kierunek wyznaczamy regułą lewej ręki.","F = 0,8 N; kierunek wyznaczamy regułą prawej ręki."] }
 ];
-
 const testB = [
   { q:"Jak zmieni się siła Ampère'a, jeśli czynną długość przewodnika zmniejszymy dwukrotnie, a pozostałe warunki nie ulegną zmianie?", opts:["Działanie siły Ampère'a ustanie.","Siła Ampère'a zmniejszy się dwukrotnie.","Siła Ampère'a zwiększy się dwukrotnie.","Siła Ampère'a nie zmieni się."] },
   { q:"W jaki sposób można zmienić kierunek ruchu przewodnika z prądem w polu magnetycznym?", opts:["Zwiększyć natężenie prądu w przewodniku.","Zmniejszyć natężenie prądu w przewodniku.","Zamienić miejscami bieguny magnesu.","Zwiększyć długość czynną przewodnika."] },
@@ -289,7 +288,6 @@ function makeOpenA() {
     { q:`Przewodnik o długości czynnej l = ${l8} m i masie liniowej λ = ${lambda8*1000} g/m umieszczono poziomo w jednorodnym polu magnetycznym o indukcji B = ${B8} T pod kątem α = 30° do linii indukcji. Oblicz minimalne natężenie prądu, przy którym siła Ampère'a uniesie przewodnik (g = 10 m/s²).`, unit:"A", params:`lambdaKg=${lambda8} l=${l8} B=${B8}` }
   ];
 }
-
 function makeOpenB() {
   const m5 = rnd(2,8,1), I5 = rnd(5,15,5), l5 = pick([0.1,0.2,0.3,0.4]);
   const l6 = pick([0.2,0.3,0.4,0.5]), B6 = pick([0.2,0.3,0.4,0.5,0.6]), I6 = rnd(5,20,5);
@@ -307,9 +305,12 @@ function makeOpenB() {
 function buildVariant(id) {
   const testQ = id==='B' ? testB : testA;
   const openQ = id==='B' ? makeOpenB() : makeOpenA();
-  const shuffledTest = shuffle(testQ.map((q)=>({...q, part:'A'})));
-  const openWithPart = openQ.map((q,i)=>({...q, origIdx:i, part:'B'}));
-  return [...shuffledTest.map((q,i)=>({...q, origIdx:i})), ...openWithPart];
+
+  // ✅ ВИПРАВЛЕНО: origIdx присвоюється ДО перемішування
+  const shuffledTest = shuffle(testQ.map((q, i) => ({ ...q, part:'A', origIdx: i })));
+  const openWithPart = openQ.map((q, i) => ({ ...q, origIdx: i, part:'B' }));
+
+  return [...shuffledTest, ...openWithPart];
 }
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -348,7 +349,6 @@ function buildPayload(status) {
     p5:oParams[0], p6:oParams[1], p7:oParams[2], p8:oParams[3]
   };
 }
-
 function sendData(status) {
   fetch(SCRIPT_URL, {
     method:'POST', mode:'no-cors',
@@ -356,14 +356,12 @@ function sendData(status) {
     body: JSON.stringify(buildPayload(status))
   }).catch(e => console.warn('Błąd wysyłania:', e));
 }
-
 function checkStart() {
   const n = document.getElementById('nazwisko').value.trim();
   const k = document.getElementById('klasa').value.trim();
   const c = document.getElementById('privacyCheck').checked;
   document.getElementById('btnStart').disabled = !(n.length>=2 && k.length>=1 && c);
 }
-
 function startTest() {
   const n = document.getElementById('nazwisko').value.trim();
   const k = document.getElementById('klasa').value.trim();
@@ -378,7 +376,6 @@ function startTest() {
   startTimer();
   showQuestion(0);
 }
-
 function showQuestion(idx) {
   currentIdx = idx;
   const q     = allQuestions[idx];
@@ -420,10 +417,8 @@ function showQuestion(idx) {
   void card.offsetWidth;
   card.classList.add('slide-in');
 }
-
 let selectedOptDisplayIdx = null;
 let selectedOrigOptIdx    = null;
-
 function selectOpt(displayIdx, el, origOpt) {
   document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
@@ -431,12 +426,10 @@ function selectOpt(displayIdx, el, origOpt) {
   selectedOrigOptIdx    = origOpt;
   document.getElementById('btnNext').disabled = false;
 }
-
 function checkNext() {
   const val = document.getElementById('numericAns').value.trim();
   document.getElementById('btnNext').disabled = (val==='');
 }
-
 function nextQuestion() {
   const q = allQuestions[currentIdx];
   if (q.part==='A') {
@@ -459,7 +452,6 @@ function nextQuestion() {
     showSummary();
   }
 }
-
 function calcLocalScore() {
   const correctA = { A:[2,1,2,2], B:[1,2,2,2] };
   let scoreA=0, scoreB=0;
@@ -477,12 +469,14 @@ function calcLocalScore() {
         if (a.origIdx===0) correct=[round2(p.F/(p.B*p.l*0.5))];
         else if (a.origIdx===1) correct=[round2((p.m*10)/(p.B*p.l))];
         else if (a.origIdx===2) correct=[round2((9.1e-31*p.v*1e6)/(1.6e-19*p.B)*1e3)];
-        else if (a.origIdx===3) { const m=round2(p.lambdaKg*p.l); correct=[round2((m*10)/(p.B*p.l*0.5))]; }
+        // ✅ ВИПРАВЛЕНО: без передчасного округлення маси
+        else if (a.origIdx===3) { const m = p.lambdaKg*p.l; correct=[round2((m*10)/(p.B*p.l*0.5))]; }
       } else {
         if (a.origIdx===0) correct=[round2((p.m*0.001*10)/(p.I*p.l))];
         else if (a.origIdx===1) correct=[round2(p.I*p.t)];
         else if (a.origIdx===2) correct=[round2((1.67e-27*p.v*1e6)/(1.6e-19*p.B)*100)];
-        else if (a.origIdx===3) { const m=round2(p.lambdaKg*p.l); correct=[round2((m*10)/(p.B*p.l))]; }
+        // ✅ ВИПРАВЛЕНО: без передчасного округлення маси
+        else if (a.origIdx===3) { const m = p.lambdaKg*p.l; correct=[round2((m*10)/(p.B*p.l))]; }
       }
       if (correct) {
         const v = parseFloat(String(a.answer).replace(',','.'));
@@ -492,7 +486,6 @@ function calcLocalScore() {
   });
   return { scoreA, scoreB, total:Math.round((scoreA+scoreB)*10)/10 };
 }
-
 function showSummary() {
   document.getElementById('screenQuestion').classList.add('hidden');
   document.getElementById('screenSummary').classList.remove('hidden');
@@ -514,7 +507,6 @@ function showSummary() {
     <p style="margin-top:14px;font-size:12px;color:var(--muted);font-style:italic;">Wynik zostanie wysłany do nauczyciela po kliknięciu przycisku poniżej.</p>
   `;
 }
-
 let seconds=TEST_MINUTES*60, ended=false, timerInterval;
 function startTimer() {
   updateTimer();
@@ -531,7 +523,6 @@ function updateTimer() {
   if (seconds<=0) { clearInterval(timerInterval); autoTimeEnd(); }
   seconds--;
 }
-
 function autoTimeEnd() {
   if (ended) return;
   ended=true;
@@ -541,14 +532,12 @@ function autoTimeEnd() {
   document.querySelector('#success .success-title').textContent = 'Czas minął!';
   document.querySelector('#success .success-sub').textContent   = 'Sprawdzian zakończony automatycznie. Twoje odpowiedzi zostały zapisane.';
 }
-
 let violations=0, lastViolation=0;
 //document.addEventListener('visibilitychange',()=>{ if (document.hidden && !ended && testStarted) recordViolation(); });
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('keydown',e=>{
   if (e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key))||(e.ctrlKey&&e.key==='U')) e.preventDefault();
 });
-
 function recordViolation() {
   const now=Date.now();
   if (now-lastViolation<2000) return;
@@ -564,14 +553,12 @@ function recordViolation() {
   }
 }
 function closeOverlay() { document.getElementById('overlay').classList.remove('show'); }
-
 function endTest() {
   ended=true; clearInterval(timerInterval);
   document.getElementById('overlay').classList.remove('show');
   document.getElementById('ended').classList.add('show');
   sendData('⛔ ZABLOKOWANY');
 }
-
 async function submitTest(auto=false) {
   document.getElementById('btnSubmit').disabled=true;
   document.getElementById('btnText').textContent='Wysyłanie...';
@@ -597,6 +584,7 @@ async function submitTest(auto=false) {
   `;
   document.getElementById('btnSubmit').style.display='none';
   document.querySelector('.submit-note').style.display='none';
+  sendData('✅ UKOŃCZONO');
 }
 </script>
 </body>
